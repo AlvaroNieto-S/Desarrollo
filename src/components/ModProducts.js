@@ -1,19 +1,17 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { AddShoppingCart } from '@material-ui/icons';
 import accounting from "accounting";
-import { actionTypes } from '../reducer';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { useHistory } from 'react-router';
 import {useStateValue} from '../StateProvider';
+import {actionTypes} from '../reducer';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -37,30 +35,26 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
+  cardActions: {
+      display: "flex",
+      justifyContent: "space-between",
+      textAlign: "center",
+  },
+  cardRating: {
+      display: "flex",
+  },
 }));
 
-export default function Product({product: {id, name, productType, price, rating, image, description}}) {
+export default function ModProduct({product: {id, name, productType, price, rating, image, description}}) {
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
+  var indi=0;
+  const history = useHistory();
   const [{basket},dispatch] = useStateValue();
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
 
-  const addToBasket = () =>{
-    dispatch({
-      type: actionTypes.ADD_TO_BASKET,
-      item: {
-        id,
-        name,
-        productType,
-        price,
-        rating,
-        image,
-        description,
-      }
-    })
-  };
+  const removeItem = () => dispatch({
+    type: actionTypes.REMOVE_ITEM,
+    id: id,
+  })
 
   return (
     <Card className={classes.root}>
@@ -82,37 +76,18 @@ export default function Product({product: {id, name, productType, price, rating,
         image={image}
         title={name}
       />
-      <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
-          {productType}
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="Agregar al Carrito" onClick = {addToBasket}>
-          <AddShoppingCart frontSize='large'/>
-        </IconButton>
+      <CardActions disableSpacing className = {classes.cardActions}>
+        <div className ={classes.cardRating}>
         {Array(rating)
           .fill()
           .map((_, i) => (
             <p>&#11088;</p>
           ))}
-        <IconButton
-          className={clsx(classes.expand, {
-            [classes.expandOpen]: expanded,
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
+        </div>
+        <IconButton>
+        <DeleteIcon frontsize= "large" onClick={removeItem}/>
         </IconButton>
       </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>{description}
-          </Typography>
-        </CardContent>
-      </Collapse>
     </Card>
   );
 }

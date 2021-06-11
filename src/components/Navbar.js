@@ -9,6 +9,10 @@ import logo from './assets/logo.png';
 import { ShoppingCart } from '@material-ui/icons';
 import { Badge } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import {useStateValue} from '../StateProvider';
+import { auth } from '../Firebase';
+import {useHistory} from 'react-router-dom';
+import { actionTypes } from '../reducer';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,6 +33,23 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Navbar() {
   const classes = useStyles();
+  const [{basket,user},dispatch] = useStateValue(); 
+  const history = useHistory();
+
+  const handleClick = ()=>{
+    if(user){
+      auth.signOut();
+      dispatch({
+        type: actionTypes.EMPTY_BASKET,
+        basket: [],
+      })
+      dispatch({
+        type: actionTypes.SET_USER,
+        user: null,
+      })
+      history.push('/');
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -40,22 +61,24 @@ export default function Navbar() {
             </IconButton>
           </Link>
           <Typography variant="h6" color="textPrimary" component="p">
-            Shiro Store
+            Shiro Store       Hola {user ? user.email : "Usuario"}
           </Typography>
           <div className = {classes.grow} />
           <div className= {classes.Button}>
               <Link to="/signin">
-                <Button variant="outlined">
+                <Button variant="outlined" onClick = {handleClick}>
                   <strong>
-                      Sign In
+                      {user ? "Sign Out" : "Sign in"}
                   </strong>
                 </Button>
               </Link>
+            <Link to="/cart">
             <IconButton aria-label="Show Cart Items" color="inherit">
-                <Badge badgeContent = {2} color = "secondary">
+                <Badge badgeContent = {basket?.length} color = "secondary">
                     <ShoppingCart frontSize="large" color="primary"/>    
                 </Badge>    
             </IconButton> 
+            </Link>
           </div>
         </Toolbar>
       </AppBar>
