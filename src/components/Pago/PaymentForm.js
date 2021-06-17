@@ -32,6 +32,7 @@ const CARD_ELEMENT_OPTIONS ={
   },
 }
 
+/*
 const CheckoutForm = ({backStep,nexStep}) =>{
   const [{basket,paymentMessage},dispatch]=useStateValue();
   const [checkout,setCheckout] = useState(false);
@@ -74,7 +75,7 @@ const CheckoutForm = ({backStep,nexStep}) =>{
     }
     setLoading(false);
   }
-  */
+  
   return(
     <>
     {checkout ? (
@@ -115,11 +116,11 @@ const CheckoutForm = ({backStep,nexStep}) =>{
       }
       </Button>
       </div>
-    */}
+    }
     </>
   )
 }
-
+*/
 
 function PaymentForm({nexStep, backStep}) {
   const [{completeOrder,basket},dispatch] = useStateValue();
